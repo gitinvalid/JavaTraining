@@ -1,0 +1,63 @@
+version: "3"
+services:
+  db:
+    image: mysql
+    ports:
+      - 3306:3306
+    command:
+      --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_DATABASE: demo
+      MYSQL_ROOT_PASSWORD: root
+
+  eureka:
+    image: eureka
+    ports:
+      - 3000:3000
+
+  config:
+    image: config
+    depends_on:
+      - eureka
+    ports:
+      - 3001:3001
+    environment:
+      EUREKA_SERVER_HOST: eureka
+      EUREKA_SERVER_PORT: 3000
+
+  gateway:
+    image: gateway
+    depends_on:
+      - eureka
+    ports:
+      - 3002:3002
+    environment:
+      EUREKA_SERVER_HOST: eureka
+      EUREKA_SERVER_PORT: 3000
+
+  user:
+    image: user
+    depends_on:
+      - db
+      - eureka
+      - config
+    ports:
+      - 3003:3003
+    environment:
+      MYSQLDB_HOST: db
+      MYSQLDB_PORT: 3306
+      MYSQLDB_NAME: demo
+      MYSQLDB_USERNAME: root
+      MYSQLDB_PASSWORD: root
+      EUREKA_SERVER_HOST: eureka
+      EUREKA_SERVER_PORT: 3000
+
+  email:
+    image: email
+    depends_on:
+      - eureka
+    ports:
+      - 3004:3004
+    environment:
+      EUREKA_SERVER_HOST: eureka
+      EUREKA_SERVER_PORT: 3000

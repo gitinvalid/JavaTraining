@@ -1,0 +1,13 @@
+server:
+  port: 3001
+
+spring:
+  application:
+    name: config
+  profiles:
+    active: native
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${EUREKA_SERVER_HOST}:${EUREKA_SERVER_PORT}/eureka/
